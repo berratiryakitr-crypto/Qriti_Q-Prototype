@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>CritiQ | Profilim</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* CLARET & PINK GRADIENT (Sana Özel Renkler) */
+            /* Koyu Şarap Renginden Canlı Pembeye Geçiş */
+            background: linear-gradient(135deg, #2c000e 0%, #a61e4d 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* IŞIK EFEKTİ (Pembe Parıltı) */
+        #glow-cursor {
+            position: fixed; top: 0; left: 0; width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(255, 105, 180, 0.2) 0%, rgba(100, 0, 50, 0.05) 50%, transparent 70%);
+            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%) scale(1);
+            filter: blur(80px); z-index: -1; transition: transform 0.2s ease-out; mix-blend-mode: screen;
+        }
+        #glow-cursor.moving { transform: translate(-50%, -50%) scale(0.9); }
+        #glow-cursor.idle { transform: translate(-50%, -50%) scale(1.1); filter: blur(100px); }
+
+        /* MENÜ */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center; padding: 20px 60px;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 28px; color: #fff; text-decoration: none; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-item { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; transition:0.3s; display: flex; align-items: center; gap: 5px; }
+        
+        /* Menü hover rengi: Canlı Pembe */
+        .nav-item:hover, .nav-item.active { color: #ff878d; text-shadow: 0 0 10px rgba(255, 135, 141, 0.5); }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+
+        /* PROFİL KARTI (PUMPIT TARZI) */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px;
+            padding: 40px; display: flex; align-items: center; gap: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); margin-bottom: 50px; position: relative;
+        }
+
+        /* İşte düzeni sağlayan çerçeve bu! */
+        .avatar-wrapper { 
+            width: 160px; height: 160px; position: relative; 
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+            flex-shrink: 0; /* Kart daralsa bile resim küçülmesin */
+        }
+        .profile-avatar { 
+            width: 100%; height: 100%; object-fit: cover; border-radius: 50%; 
+            border: 4px solid #ff878d; /* Pembe Çerçeve */
+        }
+
+        .profile-info { flex: 1; }
+
+        .user-name { font-family: 'Montserrat', sans-serif; font-size: 36px; font-weight: 800; margin-bottom: 5px; }
+        
+        .user-role { 
+            display: inline-block; background: #ff878d; color: #fff; 
+            padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; 
+            text-transform: uppercase; margin-bottom: 15px; 
+            box-shadow: 0 5px 15px rgba(255, 135, 141, 0.4);
+        }
+
+        .stats-row { display: flex; gap: 40px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .stat-item h3 { font-size: 24px; font-weight:800; margin: 0; color: #ff878d; }
+        .stat-item p { font-size: 12px; opacity: 0.8; margin: 0; text-transform: uppercase; }
+
+        /* KATEGORİ BAŞLIKLARI */
+        .cat-title {
+            font-family: 'Montserrat', sans-serif; font-size: 22px; color: #ff878d;
+            border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin: 40px 0 20px 0;
+            display: flex; align-items: center; gap: 10px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* FİLM LİSTESİ */
+        .movie-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        
+        .movie-card { 
+            background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; 
+            transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); 
+            position: relative;
+        }
+        
+        .movie-card:hover { 
+            transform: translateY(-10px); 
+            background: rgba(255, 255, 255, 0.15); 
+            border-color: #ff878d; 
+            box-shadow: 0 10px 30px rgba(166, 30, 77, 0.4);
+        }
+        
+        .movie-poster { width: 100%; height: 320px; object-fit: cover; }
+        .movie-info { padding: 15px; }
+        .movie-title { font-weight: bold; margin-bottom: 5px; }
+        
+        .rating-badge { 
+            background: #ff878d; padding: 3px 8px; border-radius: 5px; 
+            font-size: 12px; font-weight: bold; box-shadow: 0 0 10px rgba(255, 135, 141, 0.5);
+        }
+        
+        .tag-watch { 
+            position: absolute; top: 10px; right: 10px; 
+            background: rgba(44, 0, 14, 0.8); color: #fff; font-size: 10px; 
+            padding: 4px 8px; border-radius: 5px; border: 1px solid #ff878d;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="glow-cursor"></div>
+
+    <nav class="navbar">
+        <a href="/" class="logo">CRITI_Q</a>
+        <div class="nav-links">
+            <a href="/" class="nav-item"><i class="fas fa-home"></i> Ana Sayfa</a>
+            <a href="/profil" class="nav-item active"><i class="fas fa-user-circle"></i> Profilim</a>
+            <a href="/users" class="nav-item"><i class="fas fa-users"></i> Arkadaşlar</a>
+            <a href="/logout" class="nav-item" style="color: #ff878d;"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="profile-card">
+            
+            <div class="avatar-wrapper">
+                <img src="/static/Flores 20.jpg" class="profile-avatar" alt="Berra">
+            </div>
+            
+            <div class="profile-info">
+                <div class="user-name">Berra Tiryaki</div>
+                
+              
+                <div class="user-role">Berroski</div>
+                <p style="font-size: 14px; line-height: 1.6; max-width: 500px; color: #eee;">
+                    "Filmler, rüyaların kaydedilmiş halidir. Kendi arşivimi oluşturuyorum."
+                </p>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <h3>{{ filmler|selectattr("kullanici_id", "equalto", session.user_id)|selectattr("durum", "equalto", "izlendi")|list|length }}</h3>
+                        <p>İzlenen</p>
+                    </div>
+                    <div class="stat-item"><h3>245</h3><p>Takipçi</p></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cat-title">
+            <i class="fas fa-bookmark"></i> İzlenecekler Listem
+        </div>
+        
+        <div class="movie-list">
+            {% for film in filmler if film.kullanici_id == session.user_id and film.durum == 'izlenecek' %}
+            
+            <a href="/film-degerlendir/{{ film.id }}" style="text-decoration:none; color:white;">
+                <div class="movie-card">
+                    <div class="tag-watch">İzle & Puanla <i class="fas fa-play"></i></div>
+                    <img src="{{ film.poster_url }}" class="movie-poster">
+                    <div class="movie-info">
+                        <div class="movie-title">{{ film.baslik }}</div>
+                        <p style="font-size:12px; color:#ccc;">Henüz izlenmedi. Puanlamak için tıkla.</p>
+                    </div>
+                </div>
+            </a>
+
+            {% else %}
+            <p style="color:#ccc; grid-column: 1/-1; text-align:center;">
+                Listen bomboş! Ana sayfadan film ekleyerek başla. 🎬
+            </p>
+            {% endfor %}
+        </div>
+
+        <div class="cat-title" style="margin-top: 50px;">
+            <i class="fas fa-check-circle"></i> İzlediklerim ve Puanlarım
+        </div>
+        
+        <div class="movie-list">
+            {% for film in filmler if film.kullanici_id == session.user_id and film.durum == 'izlendi' %}
+            <div class="movie-card">
+                <img src="{{ film.poster_url }}" class="movie-poster">
+                <div class="movie-info">
+                    <div class="movie-title">{{ film.baslik }}</div>
+                    <span class="rating-badge">⭐ {{ film.kullanici_puan }}/10</span>
+                    <p style="font-size:12px; font-style:italic; color:#ccc; margin-top:10px; border-left:2px solid #ff878d; padding-left:8px;">
+                        "{{ film.yorum }}"
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <script>
+        const glow = document.getElementById('glow-cursor');
+        let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0, timeout;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            glow.classList.add('moving'); glow.classList.remove('idle');
+            clearTimeout(timeout);
+            timeout = setTimeout(() => { glow.classList.remove('moving'); glow.classList.add('idle'); }, 100);
+        });
+        function animate() {
+            glowX += (mouseX - glowX) * 0.1; glowY += (mouseY - glowY) * 0.1;
+            glow.style.left = glowX + 'px'; glow.style.top = glowY + 'px';
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>Değerlendir: {{ film.baslik }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* LÜKS PUMPIT ARKA PLAN */
+            background: radial-gradient(circle at top left, #5c0f0f 0%, #000000 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .review-container {
+            width: 900px;
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        /* SOL TARAF: POSTER */
+        .poster-section {
+            flex: 1;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+        .poster-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: 0.5s;
+        }
+        .poster-section:hover .poster-img { opacity: 1; transform: scale(1.05); }
+
+        /* SAĞ TARAF: FORM */
+        .form-section {
+            flex: 1.2;
+            padding: 50px;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        h2 { font-family: 'Montserrat'; color: #ffd700; font-size: 32px; margin-bottom: 10px; }
+        p.subtitle { color: #ccc; font-size: 14px; margin-bottom: 40px; }
+
+        .form-group { margin-bottom: 25px; }
+        
+        label { display: block; color: #ffd700; font-weight: bold; margin-bottom: 10px; font-size: 14px; }
+
+        /* PUANLAMA (YILDIZLI SEÇİM GİBİ GÖRÜNEN SELECT) */
+        select {
+            width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #444;
+            background: rgba(255,255,255,0.1); color: #fff; font-family: 'Poppins'; outline: none;
+            cursor: pointer;
+        }
+        select option { background: #333; color: #fff; }
+
+        /* YORUM KUTUSU */
+        textarea {
+            width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #444;
+            background: rgba(255,255,255,0.1); color: #fff; font-family: 'Poppins'; outline: none;
+            resize: none; transition: 0.3s;
+        }
+        textarea:focus { border-color: #ffd700; background: rgba(255,255,255,0.15); }
+
+        /* BUTONLAR */
+        .btn-submit {
+            width: 100%; padding: 15px; border-radius: 30px; border: none;
+            background: linear-gradient(135deg, #ffd700, #b30000);
+            color: #fff; font-weight: 800; cursor: pointer; transition: 0.3s; font-size: 16px;
+            box-shadow: 0 10px 20px rgba(179, 0, 0, 0.3);
+        }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(179, 0, 0, 0.5); }
+
+        .btn-cancel {
+            display: block; text-align: center; margin-top: 20px; color: #888; text-decoration: none; font-size: 12px;
+        }
+        .btn-cancel:hover { color: #fff; }
+
+    </style>
+</head>
+<body>
+
+    <div class="review-container">
+        
+        <div class="poster-section">
+            <img src="{{ film.poster_url }}" class="poster-img">
+        </div>
+
+        <div class="form-section">
+            <h2>{{ film.baslik }}</h2>
+            <p class="subtitle">Bu filmi izledin. Şimdi eleştirme zamanı! 🎬</p>
+
+            <form method="POST">
+                
+                <div class="form-group">
+                    <label><i class="fas fa-star"></i> Puanın (10 üzerinden)</label>
+                    <select name="puan" required>
+                        <option value="" disabled selected>Puan Seç...</option>
+                        <option value="10">10 - Kusursuz (Masterpiece)</option>
+                        <option value="9">9 - Muazzam</option>
+                        <option value="8">8 - Çok İyi</option>
+                        <option value="7">7 - İyi</option>
+                        <option value="6">6 - Ortalama</option>
+                        <option value="5">5 - İdare Eder</option>
+                        <option value="1">1 - Zaman Kaybı</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-comment"></i> Yorumun</label>
+                    <textarea name="yorum" rows="4" placeholder="Film nasıldı? En sevdiğin sahne neydi?" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">İzledim & Kaydet ✨</button>
+                <a href="/profil" class="btn-cancel">Vazgeç</a>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+</html>

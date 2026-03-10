@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>CritiQ | Sohbet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top center, #5c0f0f 0%, #000000 90%);
+            color: #fff;
+            height: 100vh;
+            display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+
+        .chat-container {
+            width: 100%; max-width: 500px; height: 90vh;
+            background: rgba(30, 30, 30, 0.6); backdrop-filter: blur(20px);
+            border-radius: 30px; border: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5); position: relative;
+        }
+
+        .chat-header {
+            padding: 20px; background: rgba(20, 20, 20, 0.8);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-title {
+            font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 18px; color: #ffd700;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .online-dot { width: 10px; height: 10px; background: #00c853; border-radius: 50%; box-shadow: 0 0 10px #00c853; }
+        .btn-close { color: #aaa; font-size: 20px; text-decoration: none; transition: 0.3s; }
+        .btn-close:hover { color: #ff4d4d; transform: rotate(90deg); }
+
+        .chat-body {
+            flex: 1; padding: 20px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 15px;
+            background: rgba(0,0,0,0.2);
+            scroll-behavior: smooth;
+        }
+        .chat-body::-webkit-scrollbar { width: 5px; }
+        .chat-body::-webkit-scrollbar-thumb { background: #8B0000; border-radius: 10px; }
+
+        .message {
+            max-width: 80%; padding: 12px 18px; border-radius: 20px;
+            font-size: 14px; line-height: 1.4; position: relative;
+            animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* KİM GÖNDERDİ İSMİ (GRUP İÇİN) */
+        .sender-name {
+            font-size: 10px; color: #ffd700; margin-bottom: 3px; font-weight: bold; display: block;
+        }
+
+        .message.received {
+            align-self: flex-start; background: rgba(60, 60, 60, 0.8); color: #ddd;
+            border-bottom-left-radius: 5px;
+        }
+        .message.sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #8B0000, #5c0f0f); color: #fff;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.3); border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        .msg-time { display: block; font-size: 10px; opacity: 0.6; margin-top: 5px; text-align: right; }
+
+        .chat-footer {
+            padding: 20px; background: rgba(20, 20, 20, 0.9);
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        .chat-form { display: flex; flex-direction: column; gap: 10px; }
+        .input-group { display: flex; gap: 10px; align-items: center; }
+        .input-message {
+            flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 20px; border-radius: 25px; color: #fff; outline: none;
+            font-family: 'Poppins', sans-serif; transition: 0.3s;
+        }
+        .input-message:focus { border-color: #ffd700; background: rgba(255,255,255,0.15); }
+        .btn-send {
+            background: linear-gradient(135deg, #ffd700, #ff8c42); border: none;
+            width: 50px; height: 50px; border-radius: 50%;
+            color: #3e0e0e; font-size: 20px; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        .btn-send:hover { transform: scale(1.1) rotate(-10deg); background: #fff; }
+
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        
+        <div class="chat-header">
+            <div class="header-title">
+                <div class="online-dot"></div>
+                {{ alici }}
+            </div>
+            <a href="/users" class="btn-close"><i class="fas fa-times"></i></a>
+        </div>
+
+        <div class="chat-body" id="message-box">
+            
+            {% if mesajlar|length == 0 %}
+                <p style="text-align:center; color:#666; margin-top:50px;">Sohbeti başlat! 👋</p>
+            {% else %}
+                {% for m in mesajlar %}
+                    {% if m.kimden == 'ben' %}
+                        <div class="message sent">
+                            {{ m.mesaj }}
+                            <span class="msg-time">{{ m.saat }}</span>
+                        </div>
+                    {% else %}
+                        <div class="message received">
+                            {% if m.kimden != 'karsi' %}
+                                <span class="sender-name">{{ m.kimden }}</span>
+                            {% endif %}
+                            
+                            {{ m.mesaj }}
+                            <span class="msg-time">{{ m.saat }}</span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+        </div>
+
+        <div class="chat-footer">
+            <form action="/mesaj-gonder" method="POST" class="chat-form">
+                <input type="hidden" name="alici" value="{{ alici }}">
+                <div class="input-group">
+                    <input type="text" name="mesaj" class="input-message" placeholder="Bir şeyler yaz..." required autocomplete="off" autofocus>
+                    <button type="submit" class="btn-send"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        window.onload = function() {
+            var chatBox = document.getElementById("message-box");
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>

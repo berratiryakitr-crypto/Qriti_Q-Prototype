@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>CritiQ | {{ user.isim }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: {{ user.bg_gradient }}; 
+            color: #fff; min-height: 100vh; overflow-x: hidden; cursor: default;
+        }
+        #glow-cursor {
+            position: fixed; top: 0; left: 0; width: 700px; height: 700px;
+            background: {{ user.spotlight_gradient }};
+            border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%) scale(1);
+            filter: blur(80px); z-index: -1; transition: transform 0.2s ease-out; mix-blend-mode: screen;
+        }
+        #glow-cursor.moving { transform: translate(-50%, -50%) scale(0.9); }
+        #glow-cursor.idle { transform: translate(-50%, -50%) scale(1.1); filter: blur(100px); }
+
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center; padding: 20px 60px;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 28px; color: #fff; text-decoration: none; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-item { color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; transition:0.3s; display: flex; align-items: center; gap: 5px; }
+        .nav-item:hover { color: {{ user.vurgu_renk }}; opacity: 0.8; }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .profile-card {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px;
+            padding: 40px; display: flex; align-items: center; gap: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); margin-bottom: 50px; position: relative;
+        }
+        .avatar-wrapper { width: 160px; height: 160px; position: relative; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2)); }
+        .profile-avatar { width: 100%; height: 100%; object-fit: cover; border-radius: {{ user.avatar_sekil }}; border: 4px solid rgba(255, 255, 255, 0.8); }
+        .diamond .profile-avatar { border-radius: 0; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); border: none; transform: scale(1.1); }
+        .user-name { font-family: 'Montserrat', sans-serif; font-size: 36px; font-weight: 800; margin-bottom: 5px; }
+        .user-role { display: inline-block; background: {{ user.vurgu_renk }}; color: #fff; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .stats-row { display: flex; gap: 40px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .stat-item h3 { font-size: 24px; font-weight:800; margin: 0; }
+        .stat-item p { font-size: 12px; opacity: 0.8; margin: 0; text-transform: uppercase; }
+        /* Mesaj Butonu - YAZI RENGİNİ SİYAH YAPTIK */
+        .btn-message {
+            background: #fff;
+            color: #000;  /* BURASI DEĞİŞTİ: Artık sabit siyah */
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-message:hover { transform: scale(1.05); box-shadow: 0 0 20px {{ user.vurgu_renk }}; }
+        
+        /* KATEGORİ BAŞLIKLARI (YENİ) */
+        ./* KATEGORİ BAŞLIKLARI - GÜNCELLENDİ */
+        .cat-title {
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 22px; 
+            
+            /* ESKİSİ: color: {{ user.vurgu_renk }}; (Bu yüzden görünmüyordu) */
+            /* YENİSİ: Beyaz yapıyoruz ve gölge ekliyoruz ki her zeminde parlasın */
+            color: #ffffff; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+
+            border-bottom: 1px solid rgba(255,255,255,0.2); 
+            padding-bottom: 10px; 
+            margin: 40px 0 20px 0;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .movie-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        .movie-card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; overflow: hidden; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px); position: relative; }
+        .movie-card:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.15); border-color: {{ user.vurgu_renk }}; }
+        .movie-poster { width: 100%; height: 320px; object-fit: cover; }
+        .movie-info { padding: 15px; }
+        .movie-title { font-weight: bold; margin-bottom: 5px; }
+        .rating-badge { background: {{ user.vurgu_renk }}; padding: 3px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; }
+        .tag-watch { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; padding: 4px 8px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div id="glow-cursor"></div>
+
+    <nav class="navbar">
+        <a href="/" class="logo">CRITI_Q</a>
+        <div class="nav-links">
+            <a href="/" class="nav-item"><i class="fas fa-home"></i> Ana Sayfa</a>
+            <a href="/users" class="nav-item"><i class="fas fa-users"></i> Arkadaşlara Dön</a>
+            <a href="/logout" class="nav-item"><i class="fas fa-sign-out-alt"></i> Çıkış</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="avatar-wrapper {{ user.ozel_sekil_class }}">
+                <img src="{{ user.resim }}" class="profile-avatar" alt="{{ user.isim }}">
+            </div>
+            <div class="profile-info">
+                <div class="user-name">{{ user.isim }}</div>
+                <div class="user-role">{{ user.rol }}</div>
+                <p style="font-size: 14px; line-height: 1.6; max-width: 500px;">"{{ user.bio }}"</p>
+                <div class="stats-row">
+                    <div class="stat-item"><h3>{{ user.izlenen }}</h3><p>İzlenen</p></div>
+                    <div class="stat-item"><h3>{{ user.takipci }}</h3><p>Takipçi</p></div>
+                </div>
+                <a href="/mesaj-yaz?alici={{ user.isim }}" class="btn-message"><i class="fas fa-comment-alt"></i> Mesaj Gönder</a>
+            </div>
+        </div>
+
+        <div class="cat-title">
+            <i class="fas fa-bookmark"></i> {{ user.isim }}'in İzleyecekleri
+        </div>
+        <div class="movie-list">
+            {% for film in filmler if film.kullanici_id == user.id and film.durum == 'izlenecek' %}
+            <div class="movie-card">
+                <div class="tag-watch">Sırada</div>
+                <img src="{{ film.poster_url }}" class="movie-poster">
+                <div class="movie-info">
+                    <div class="movie-title">{{ film.baslik }}</div>
+                    <p style="font-size:12px; color:#aaa; margin-top:5px;">Henüz izlemedi</p>
+                </div>
+            </div>
+            {% else %}
+            <p style="color:#aaa; grid-column: 1/-1;">Bu listede henüz film yok.</p>
+            {% endfor %}
+        </div>
+
+        <div class="cat-title" style="margin-top: 50px;">
+            <i class="fas fa-check-circle"></i> İzledikleri ve Puanları
+        </div>
+        <div class="movie-list">
+            {% for film in filmler if film.kullanici_id == user.id and film.durum == 'izlendi' %}
+            <div class="movie-card">
+                <img src="{{ film.poster_url }}" class="movie-poster">
+                <div class="movie-info">
+                    <div class="movie-title">{{ film.baslik }}</div>
+                    <span class="rating-badge">{{ film.kullanici_puan }}/10</span>
+                    <p style="font-size:12px; margin-top:10px; font-style:italic; opacity:0.8;">"{{ film.yorum }}"</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        const glow = document.getElementById('glow-cursor');
+        let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0, timeout;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            glow.classList.add('moving'); glow.classList.remove('idle');
+            clearTimeout(timeout);
+            timeout = setTimeout(() => { glow.classList.remove('moving'); glow.classList.add('idle'); }, 100);
+        });
+        function animate() {
+            glowX += (mouseX - glowX) * 0.1; glowY += (mouseY - glowY) * 0.1;
+            glow.style.left = glowX + 'px'; glow.style.top = glowY + 'px';
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>

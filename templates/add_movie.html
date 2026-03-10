@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>CritiQ | Film Ekle</title>
+    <link rel="stylesheet" href="{{ url_for('style.css') }}"> <style>
+        body { background-color: #1A1A1A; color: #EDEDED; font-family: sans-serif; }
+        .search-container { max-width: 600px; margin: 50px auto; text-align: center; }
+        input { padding: 12px; width: 70%; border-radius: 5px; border: 1px solid #FFD700; background: #2C2C2C; color: white; }
+        .btn-search { background: #8B0000; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .result-card { background: #2C2C2C; margin-top: 20px; padding: 20px; border-radius: 10px; border: 1px solid #8B0000; display: flex; align-items: center; gap: 20px; }
+        .result-card img { width: 80px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <header style="background: #000; padding: 20px; border-bottom: 3px solid #8B0000; display: flex; justify-content: space-between;">
+        <h1 style="color: #FFD700; margin: 0;">CritiQ</h1>
+        <nav><a href="/" style="color: #FFD700; text-decoration: none;">Listeme Dön</a></nav>
+    </header>
+
+    <div class="search-container">
+        <h2>Yeni Film Keşfet</h2>
+        <input type="text" placeholder="Film adı yazın...">
+        <button class="btn-search">Ara</button>
+
+        <div class="result-card">
+            <img src="https://via.placeholder.com/100x150" alt="Film">
+            <div style="text-align: left;">
+                <h3 style="color: #FFD700; margin: 0;">Film Başlığı</h3>
+                <p>2025 | IMDb: 8.5</p>
+                <button style="background: #FFD700; color: #000; border: none; padding: 5px 10px; border-radius: 3px; font-weight: bold;">+ Listeye Ekle</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

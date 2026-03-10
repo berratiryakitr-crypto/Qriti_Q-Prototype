@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>CritiQ | Ana Sayfa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* LÜKS ANA SAYFA ARKA PLANI */
+            background: radial-gradient(circle at top right, #3e0e0e 0%, #000000 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* --- MENÜ (NAVBAR) --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: rgba(20, 5, 5, 0.8); 
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800; font-size: 28px;
+            background: linear-gradient(to right, #ffd700, #b30000);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-decoration: none; letter-spacing: 1px;
+        }
+
+        .nav-links { display: flex; gap: 30px; }
+
+        .nav-item {
+            text-decoration: none; color: #ccc; font-size: 14px; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; padding: 8px 15px;
+            border-radius: 20px; transition: all 0.3s ease;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: #ffd700; background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+        }
+
+        /* --- İÇERİK --- */
+        .container { max-width: 1000px; margin: 40px auto; padding: 20px; }
+
+        /* --- YENİ EKLENEN KARŞILAMA BÖLÜMÜ --- */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease-out; /* Yukarıdan süzülme efekti */
+        }
+
+        .welcome-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .welcome-subtitle {
+            font-size: 18px;
+            color: #ccc;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Animasyon Tanımı */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Film Ekleme Kartı */
+        .add-movie-card {
+            background: linear-gradient(135deg, #5c0f0f, #2a0a0a);
+            padding: 40px; border-radius: 25px; text-align: center;
+            margin-bottom: 50px; border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        
+        .add-input {
+            padding: 15px 25px; width: 60%; border-radius: 30px; border: none; outline: none;
+            margin-right: 10px; font-family: 'Poppins', sans-serif;
+            background: rgba(255,255,255,0.1); color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .add-input:focus { border-color: #ffd700; background: rgba(0,0,0,0.3); }
+
+        .add-btn {
+            padding: 15px 35px; border-radius: 30px; border: none; 
+            background: #ffd700; color: #000; font-weight: 800; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        .add-btn:hover { background: #fff; transform: scale(1.05); }
+
+        /* Başlık ve Liste */
+        .section-title {
+            font-family: 'Montserrat', sans-serif; font-size: 24px; color: #ffd700;
+            border-left: 5px solid #8B0000; padding-left: 15px; margin-bottom: 30px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; }
+        .card { 
+            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; 
+            border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); border-color: #ffd700; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .card img { width: 100%; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo">CRITI_Q</a>
+        
+        <div class="nav-links">
+            <a href="/" class="nav-item active">
+                <i class="fas fa-home"></i> Ana Sayfa
+            </a>
+            <a href="/profil" class="nav-item">
+                <i class="fas fa-user-circle"></i> Profilim
+            </a>
+            <a href="/users" class="nav-item">
+                <i class="fas fa-users"></i> Arkadaşlar
+            </a>
+            <a href="/logout" class="nav-item" style="color: #ff4d4d;">
+                <i class="fas fa-sign-out-alt"></i> Çıkış
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="welcome-section">
+            <h1 class="welcome-title">
+                Hoş Geldin, <span style="color: #ffd700;">{{ session.kullanici_adi }}</span>! 👋
+            </h1>
+            <p class="welcome-subtitle">
+                Eleştirmen koltuğun hazır.<br> Sadece izleyici olarak kalma. Bugün hangi filme veya diziye notunu ver!
+            </p>
+        </div>
+
+        <div class="add-movie-card">
+            <h2 style="font-family:'Montserrat'; margin-bottom:10px; font-size: 24px; color:#fff;">
+                🎬 Yeni Bir Keşif mi?
+            </h2>
+            <p style="margin-bottom:30px; color:#ccc; font-size:14px;">İzlemek istediğin filmi buraya ekle, listene atalım!</p>
+            
+            <form action="/film-ekle" method="POST">
+                <input type="text" name="film_adi" class="add-input" placeholder="Film adı yaz (Örn: Inception)" required autocomplete="off">
+                <button type="submit" class="add-btn">+ Ekle</button>
+            </form>
+        </div>
+
+        <div class="section-title">
+            <i class="fas fa-star"></i> Senin Son Eleştirilerin
+        </div>
+        
+        <div class="grid">
+            {% for film in filmler if film.kullanici_id == session.user_id and film.durum == 'izlendi' %}
+            <div class="card">
+                <img src="{{ film.poster_url }}">
+                <h3 style="margin-top:15px; font-size:16px; font-family:'Montserrat';">{{ film.baslik }}</h3>
+                <div style="color:#ffd700; font-weight:bold; font-size:14px; margin: 5px 0;">
+                    ⭐ {{ film.kullanici_puan }}/10
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</body>
+</html>

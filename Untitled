@@ -1,0 +1,36 @@
+from flask import Flask, render_template, request, redirect, url_for, session
+import MySQLdb
+
+app = Flask(__name__)
+app.secret_key = "critiq_gizli_anahtar"
+
+# MySQL Bağlantısı
+def get_db():
+    return MySQLdb.connect(host="localhost", user="root", passwd="", db="critiq_db")
+
+@app.route('/')
+def index():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    db = get_db()
+    cursor = db.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM Filmler WHERE kullanici_id = %s", (session['user_id'],))
+    filmler = cursor.fetchall()
+    return render_template('index.html', filmler=filmler)
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/test-login')
+def test_login():
+    session['user_id'] = 1 # Test için otomatik giriş
+    return redirect(url_for('index'))
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
